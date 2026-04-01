@@ -4,6 +4,15 @@
 #include <unistd.h>
 #include <arpa/inet.h>
 
+/*
+ * broker_tcp.c
+ *
+ * Broker tipo publish/subscribe usando TCP.
+ * - Escucha conexiones en el puerto 5000.
+ * - Guarda sockets de clientes conectados.
+ * - Recibe mensajes de un cliente y los reenvia a todos los clientes.
+ */
+
 #define PORT 5000
 #define MAX_CLIENTS 10
 #define BUFFER 1024
@@ -11,6 +20,7 @@
 int clients[MAX_CLIENTS];
 int client_count = 0;
 
+/* Reenvia el mensaje a todos los sockets registrados. */
 void broadcast(char *message) {
     for(int i=0;i<client_count;i++) {
         send(clients[i], message, strlen(message), 0);
@@ -35,6 +45,7 @@ int main() {
 
     printf("Broker TCP listening on port %d\n", PORT);
 
+    /* Acepta clientes continuamente y atiende cada socket en un hijo. */
     while(1) {
 
         new_socket = accept(server_fd,(struct sockaddr*)&address,(socklen_t*)&addrlen);
@@ -43,6 +54,7 @@ int main() {
 
         if(fork()==0) {
 
+            /* Lee mensajes del cliente y los publica al resto de clientes. */
             while(1) {
                 int valread = read(new_socket, buffer, BUFFER);
                 if(valread <= 0) break;

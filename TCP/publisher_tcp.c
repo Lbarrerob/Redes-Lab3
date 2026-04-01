@@ -4,6 +4,15 @@
 #include <unistd.h>
 #include <arpa/inet.h>
 
+/*
+ * publisher_tcp.c
+ *
+ * Cliente publisher TCP.
+ * - Se conecta al broker en 127.0.0.1:5000.
+ * - Lee eventos desde stdin.
+ * - Envia cada evento al broker.
+ */
+
 #define PORT 5000
 
 int main() {
@@ -20,6 +29,7 @@ int main() {
 
     connect(sock,(struct sockaddr*)&serv_addr,sizeof(serv_addr));
 
+    /* Captura y publica eventos en un ciclo infinito. */
     while(1) {
         printf("Evento: ");
         fgets(message,1024,stdin);

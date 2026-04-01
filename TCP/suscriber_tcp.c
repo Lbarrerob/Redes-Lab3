@@ -4,6 +4,15 @@
 #include <unistd.h>
 #include <arpa/inet.h>
 
+/*
+ * suscriber_tcp.c
+ *
+ * Cliente subscriber TCP.
+ * - Se conecta al broker en 127.0.0.1:5000.
+ * - Queda bloqueado leyendo mensajes del broker.
+ * - Imprime cada update recibido.
+ */
+
 #define PORT 5000
 
 int main() {
@@ -22,6 +31,7 @@ int main() {
 
     printf("Subscriber conectado...\n");
 
+    /* Recibe eventos publicados por el broker y los muestra en consola. */
     while(1) {
 
         int valread = read(sock, buffer, 1024);

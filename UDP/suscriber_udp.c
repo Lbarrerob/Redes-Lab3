@@ -4,6 +4,15 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 
+/*
+ * suscriber_udp.c
+ *
+ * Cliente subscriber UDP.
+ * - Abre un socket local en el puerto 6001.
+ * - Envia "SUBSCRIBE" al broker para registrarse.
+ * - Recibe e imprime eventos reenviados por el broker.
+ */
+
 #define BROKER_PORT 6000
 #define MY_PORT 6001
 #define BUFFER 1024
@@ -37,11 +46,13 @@ int main() {
     broker_addr.sin_port = htons(BROKER_PORT);
     inet_pton(AF_INET, "127.0.0.1", &broker_addr.sin_addr);
 
+    /* Mensaje de registro para que el broker agregue este subscriber. */
     sendto(sock, "SUBSCRIBE", 9, 0,
            (struct sockaddr*)&broker_addr, sizeof(broker_addr));
 
     printf("Subscriber UDP registrado y esperando mensajes...\n");
 
+    /* Espera indefinidamente nuevos eventos publicados. */
     while (1) {
         int n = recvfrom(sock, buffer, BUFFER - 1, 0,
                          NULL, NULL);

@@ -4,6 +4,15 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 
+/*
+ * broker_udp.c
+ *
+ * Broker publish/subscribe sobre UDP.
+ * - Escucha datagramas en el puerto 6000.
+ * - Registra subscribers que envian "SUBSCRIBE".
+ * - Reenvia cada evento recibido a todos los subscribers registrados.
+ */
+
 #define PORT 6000
 #define BUFFER 1024
 #define MAX_CLIENTS 20
@@ -11,6 +20,7 @@
 struct sockaddr_in subscribers[MAX_CLIENTS];
 int subscriber_count = 0;
 
+/* Verifica si un subscriber ya fue registrado previamente. */
 int subscriber_exists(struct sockaddr_in *client) {
     for (int i = 0; i < subscriber_count; i++) {
         if (subscribers[i].sin_addr.s_addr == client->sin_addr.s_addr &&
@@ -48,6 +58,7 @@ int main() {
 
     printf("Broker UDP escuchando en puerto %d...\n", PORT);
 
+    /* Procesa datagramas: registro de subscribers o broadcast de eventos. */
     while (1) {
         int n = recvfrom(sockfd, buffer, BUFFER - 1, 0,
                          (struct sockaddr*)&client_addr, &len);

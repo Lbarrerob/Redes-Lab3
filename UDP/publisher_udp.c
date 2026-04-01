@@ -4,6 +4,14 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 
+/*
+ * publisher_udp.c
+ *
+ * Cliente publisher UDP.
+ * - Envia eventos al broker en 127.0.0.1:6000.
+ * - No mantiene conexion (datagramas independientes).
+ */
+
 #define BROKER_PORT 6000
 #define BUFFER 1024
 
@@ -23,6 +31,7 @@ int main() {
     broker_addr.sin_port = htons(BROKER_PORT);
     inet_pton(AF_INET, "127.0.0.1", &broker_addr.sin_addr);
 
+    /* Captura eventos por consola y los envia al broker por UDP. */
     while (1) {
         printf("Evento: ");
         fgets(message, BUFFER, stdin);
